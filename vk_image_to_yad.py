@@ -121,14 +121,13 @@ def get_vk_photos(user_id: str, token: str, album: str, qty: int = 5) -> list:
                 break
             photo_name = str(photo['likes']['count'])
             if photo_name not in photos_dict.keys():
-                photos_dict.setdefault(f'{photo_name}.jpg', get_biggest_photo(photo['sizes']))
-                cnt += 1
+                photos_dict.setdefault(photo_name, get_biggest_photo(photo['sizes']))
             else:
                 photo_name = f"{str(photo['likes']['count'])}_{str(photo['date'])}"
                 photos_dict.setdefault(photo_name, get_biggest_photo(photo['sizes']))
-                cnt += 1
+            cnt += 1
         for file, details in photos_dict.items():
-            return_list.append({'filename': file, 'size': details['size'], 'url': details['url']})
+            return_list.append({'filename': f'{file}.jpg', 'size': details['size'], 'url': details['url']})
         return return_list
     except TypeError:
         print('Нет фотографий на загрузку')
@@ -151,7 +150,7 @@ if __name__ == '__main__':
     res_list = get_vk_photos(user, vk_token, album=albums[albumid], qty=quantity)
     upload_photos_to_yad(res_list, ya_token, dir_name)
 
-    # Сохраняем резултат в файл
+    # Сохраняем результат в файл
     with open('loaded_photos.json', 'w', encoding='utf-8') as file_obj:
         try:
             for d in res_list:
