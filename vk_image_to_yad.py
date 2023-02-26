@@ -17,7 +17,7 @@ class VkApiClient:
 
     def get_photos(self, album_id='profile', extended=1, photo_sizes=1):
         """
-        метод получает список фотографий профиля. можно переделать под получений фото из других альбомов
+        Метод получает список фотографий по выбранному альбому
         :param
         album_id:
             wall — фотографии со стены,
@@ -55,7 +55,7 @@ class YaUploader:
 
     def create_dir(self, directory: str):
         """
-        метод создает папку на Яндекс диске
+        Метод создает папку на Яндекс диске
         """
         params = {'path': directory}
         response = requests.put(self.upload_url, headers=self.auth_headers, params=params)
@@ -68,7 +68,7 @@ class YaUploader:
 
     def post_file(self, name, directory, url):
         """
-        метод загружает файлы на Яндекс Диск по ссылке из интернета
+        Метод загружает файлы на Яндекс Диск по ссылке из интернета
         """
         params = {'path': f'/{directory}/{name}', 'url': url}
         res = requests.post(self.upload_url + "upload", headers=self.auth_headers, params=params)
@@ -79,7 +79,7 @@ class YaUploader:
 def get_biggest_photo(photos_list: list) -> dict:
     """
     Выбираем фото наибольшего размера (ширина/высота в пикселях)
-    некторые старые фото имеют размер 0х0 такие фото возьмем по типу х
+    некоторые старые фото имеют размер 0х0 такие фото возьмем по типу х
     """
     if sum([item['height'] + item['width'] for item in photos_list]) == 0:
         inter = list(filter(lambda x: x['type'] == 'x', photos_list))[0]
@@ -108,7 +108,7 @@ def upload_photos_to_yad(files_list: list, token, directory):
 
 def get_vk_photos(user_id: str, token: str, album: str, qty: int = 5) -> list:
     """
-    получаем список фото на загрузку из ВК
+    Получаем список фото на загрузку из ВК
     """
     vk_client = VkApiClient(token=token, user_ids=user_id, api_version='5.131')
     try:
@@ -144,7 +144,7 @@ with open('yatoken.txt', encoding='utf-8') as ya_file:
 if __name__ == '__main__':
     user = input('Введите ID пользователя в ВК: ')
     quantity = int(input('Какое количество фотографий скачать? Введите цифру: '))
-    albumid = input('С какого альбома берем фото? 1 — фото со стены, 2 — фото профиля, 3 - сохраненнеые. Ввеидте цифру: ' )
+    albumid = input('С какого альбома берем фото? 1: фото со стены, 2: фото профиля, 3: сохраненные. Введите цифру: ' )
     albums = {'1': 'wall', '2': 'profile', '3': 'saved'}
     dir_name = 'VK_photos'
     res_list = get_vk_photos(user, vk_token, album=albums[albumid], qty=quantity)
